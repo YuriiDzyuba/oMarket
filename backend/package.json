@@ -1,0 +1,29 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start:dev": "nodemon src/main.js .env ",
+    "dev": "npm run stop && pm2 start src/main.js --watch -- .env.development && pm2 logs",
+    "start": "npm run stop && pm2 start src/main.js --watch -- .env",
+    "start:once": "node src/main.js .env.development",
+    "stop": "pm2 kill"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "joi": "^17.4.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.0.1",
+    "nodemailer": "^6.6.3",
+    "pm2": "^5.1.1",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
+  }
+}
