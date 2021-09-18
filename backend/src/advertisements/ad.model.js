@@ -1,5 +1,5 @@
 const { Schema, model } = require('mongoose');
-const { USER, ADVERTISEMENT, PRODUCT, PRICE, IS_SALE, QUANTITY } = require('../../consts/dbEnum');
+const { dbEnum: { USER, ADVERTISEMENT, PRODUCT, PRICE, IS_SALE, QUANTITY } } = require('../../consts');
 
 const schema = new Schema({
     [PRODUCT]: {

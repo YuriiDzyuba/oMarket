@@ -1,11 +1,7 @@
 const CustomError = require('../../../exeptions/customError');
-
 const authService = require('../../auth/auth.service');
-
-const code = require('../../../consts/statusCodes');
-const message = require('../../../consts/responseMessages');
 const accountService = require('../account.service');
-const dbEnum = require('../../../consts/dbEnum');
+const { code, message, dbEnum } = require('../../../consts');
 
 const accountMiddleware = {
     isAccountUnActivated: (req, res, next) => {
@@ -83,7 +79,7 @@ const accountMiddleware = {
                     [tokenType]: actionToken,
                     [dbEnum.USER]: currentUser._id
                 }
-);
+            );
 
             if (!savedToken) throw new CustomError(code.INTERNAL_SERVER_ERROR, message.CANT_CREATE_LINK);
 

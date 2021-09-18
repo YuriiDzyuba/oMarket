@@ -1,17 +1,34 @@
 const authService = require('../auth.service');
-
 const CustomError = require('../../../exeptions/customError');
 const { checkAuthInputs, createNewUserValidator, createNewAdminValidator } = require('../auth.validators');
-
-const code = require('../../../consts/statusCodes');
-const message = require('../../../consts/responseMessages');
-const dbEnum = require('../../../consts/dbEnum');
-const { AUTHORIZATION } = require('../../../consts/authConstants');
+const { availablePicParams, code, message, dbEnum, authConst } = require('../../../consts');
 
 const authMiddleware = {
     isReqQueryEmpty: (req, res, next) => {
         try {
             if (Object.keys(req.query).length) throw new CustomError(code.NOT_ACCEPTABLE, message.REQ_QUERIES_NOT_EMPTY);
+
+            next();
+
+        } catch (e) {
+            next(e);
+        }
+    },
+
+    checkAvatar: (req, res, next) => {
+        try {
+            if (!req.files || !req.files[dbEnum.AVATAR]) {
+                next();
+                return;
+            }
+            const { name, size, mimetype } = req.files[dbEnum.AVATAR];
+
+            if (!availablePicParams.MIMETYPES.includes(mimetype)) {
+                throw new CustomError(code.BAD_REQUEST, `${name} - ${message.WRONG_PIC_FORMAT}`);
+            }
+            if (size > availablePicParams.MAX_SIZE) {
+                throw new CustomError(code.BAD_REQUEST, `${name} - ${message.WRONG_PIC_SIZE}`);
+            }
 
             next();
 
@@ -82,7 +99,7 @@ const authMiddleware = {
 
     checkToken: (tokenType = dbEnum.ACCESS_TOKEN) => async (req, res, next) => {
         try {
-            const token = req.get(AUTHORIZATION);
+            const token = req.get(authConst.AUTHORIZATION);
 
             if (!token) throw new CustomError(code.UNAUTHORIZED, message.CANT_FIND_TOKEN);
 
@@ -108,7 +125,6 @@ const authMiddleware = {
 
     setNewAdminData: (req, res, next) => {
         try {
-
             const { error, value } = createNewAdminValidator.validate(req.body);
 
             if (error) throw new CustomError(code.BAD_REQUEST, error.details[0].message);
@@ -121,7 +137,6 @@ const authMiddleware = {
             next(e);
         }
     },
-
 };
 
 module.exports = authMiddleware;

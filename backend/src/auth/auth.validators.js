@@ -31,7 +31,7 @@ module.exports = {
             .trim()
             .min(PASSWORD_LENGTH_MIN)
             .max(PASSWORD_LENGTH_MAX)
-            .required(),
+            .required()
     }),
     createNewAdminValidator: Joi.object({
         [EMAIL]: Joi.string()

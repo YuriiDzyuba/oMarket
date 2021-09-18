@@ -1,8 +1,6 @@
-const adService = require('./ad.service');
 const CustomError = require('../../exeptions/customError');
-
-const code = require('../../consts/statusCodes');
-const message = require('../../consts/responseMessages');
+const adService = require('./ad.service');
+const { code, message } = require('../../consts');
 
 const adController = {
     getAllAds: (fieldsToRemove) => async (req, res, next) => {

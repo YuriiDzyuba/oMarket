@@ -1,11 +1,20 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const S3 = require('aws-sdk/clients/s3');
 
 const Auth = require('./auth.model');
 const User = require('../users/user.model');
 const config = require('../../config');
+const fileNameBuilder = require('../../utils/fileNameBuilder');
 
 const { USER, ACCESS_TOKEN, REFRESH_TOKEN, FORGOT_PASSWORD_TOKEN, ACTIVATE_ACCOUNT_TOKEN } = require('../../consts/dbEnum');
+const { AWS_S3_NAME, AWS_S3_SECRET_KEY, AWS_S3_ACCESS_KEY, AWS_S3_REGION } = require('../../config');
+
+const bucket = new S3({
+    region: AWS_S3_REGION,
+    accessKeyId: AWS_S3_ACCESS_KEY,
+    secretAccessKey: AWS_S3_SECRET_KEY
+});
 
 const authService = {
     checkEmail: async (email) => {
@@ -28,9 +37,9 @@ const authService = {
         return isEqual;
     },
 
-    generateTokenPair: () => {
-        const accessToken = jwt.sign({}, config.ACCESS_TOKEN_SECRET, { expiresIn: config.ACCESS_TOKEN_EXP_IN });
-        const refreshToken = jwt.sign({}, config.REFRESH_TOKEN_SECRET, { expiresIn: config.REFRESH_TOKEN_EXP_IN });
+    generateTokenPair: (currentUser) => {
+        const accessToken = jwt.sign(currentUser, config.ACCESS_TOKEN_SECRET, { expiresIn: config.ACCESS_TOKEN_EXP_IN });
+        const refreshToken = jwt.sign(currentUser, config.REFRESH_TOKEN_SECRET, { expiresIn: config.REFRESH_TOKEN_EXP_IN });
 
         return {
             accessToken,
@@ -89,6 +98,22 @@ const authService = {
     refreshTokenPair: async (oldToken, newTokenPair) => {
         const deletedTokens = await Auth.findOneAndUpdate(oldToken, newTokenPair);
         return deletedTokens;
+    },
+
+    uploadImageToAWS: (file, dbModel, itemId) => {
+
+        const { name, data, mimetype } = file;
+
+        const uploadPath = fileNameBuilder(name, dbModel, itemId.toString());
+
+        return bucket
+            .upload({
+                Bucket: AWS_S3_NAME,
+                Body: data,
+                Key: uploadPath,
+                ContentType: mimetype
+            })
+            .promise();
     }
 };
 

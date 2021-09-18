@@ -11,7 +11,9 @@ module.exports = {
     ACCOUNT_BANNED: 'This user account banned',
     ACCOUNT_UNBANNED: 'This user account unbanned',
 
-    WRONG_PASSWORD: 'This user account unbanned',
+    WRONG_PASSWORD: 'wrong password',
+    WRONG_PIC_FORMAT: 'pic format not available',
+    WRONG_PIC_SIZE: 'to big picture',
 
     INVALID_TOKEN: 'Invalid token',
     INVALID_EMAIL: 'Invalid email',
@@ -52,6 +54,8 @@ module.exports = {
     PASSWORD_CHANGED: 'Password changed successfully',
     AD_CREATED: 'Advertisement created successfully',
 
-    ADMIN_ACCOUNT_CREATED: 'Admin account was created, please change your password'
+    ADMIN_ACCOUNT_CREATED: 'Admin account was created, please change your password',
+
+    CORS_NOT_ALLOWED: 'Cors not allowed'
 
 };

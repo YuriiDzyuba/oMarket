@@ -11,6 +11,7 @@ authRouter.use('/', authMiddleware.isReqQueryEmpty);
 
 authRouter.post('/registration',
     authMiddleware.checkRegistrationInputs,
+    authMiddleware.checkAvatar,
     authMiddleware.isUserEmailExist(true),
     authController.createNewUser);
 

@@ -1,9 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
-
 const authService = require('../src/auth/auth.service');
-const { EMAIL, PASSWORD, NAME, BORN_YEAR, IS_ACTIVATED, IS_BANNED, ROLE } = require('../consts/dbEnum');
 
+const { userRoles, dbEnum: { EMAIL, PASSWORD, NAME, BORN_YEAR, IS_ACTIVATED, IS_BANNED, ROLE } } = require('../consts');
 const { DB_PATH } = require('../config');
 
 const app = express();
@@ -16,7 +15,7 @@ const superAdmin = {
     [BORN_YEAR]: 1999,
     [IS_ACTIVATED]: true,
     [IS_BANNED]: false,
-    [ROLE]: 'superAdmin',
+    [ROLE]: userRoles.SUPER_ADMIN,
 };
 
 const setStartSettings = async () => {

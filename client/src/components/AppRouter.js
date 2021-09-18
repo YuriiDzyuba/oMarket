@@ -1,16 +1,19 @@
 import React from 'react';
-import {Switch, Route, Redirect} from 'react-router-dom'
-import {authRoutes, publicRoutes} from "../routes";
-import {SHOP_ROUTE} from "../consts/pagePaths";
+import { Redirect, Route, Switch } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { adminRoutes, publicRoutes } from '../routes';
+import { SHOP_ROUTE } from '../consts/pagePaths';
 
 const AppRouter = () => {
 
+    const currentUser = useSelector((state) => state.user);
+
     return (
         <Switch>
-            {authRoutes.map(({path, page}) => (
+            {currentUser.role === 'user' && adminRoutes.map(({ path, page }) => (
                 <Route key={path} path={path} component={page} exact/>
             ))}
-            {publicRoutes.map(({path, page})=>(
+            {publicRoutes.map(({ path, page }) => (
                 <Route key={path} path={path} component={page} exact/>
             ))}
             <Redirect to={SHOP_ROUTE}/>

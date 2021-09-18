@@ -10,6 +10,7 @@ module.exports = {
     extends: [
         'airbnb-base',
         'eslint:recommended',
+        'react-app',
     ],
     plugins: [],
     rules: {
@@ -95,7 +96,7 @@ module.exports = {
         'no-self-compare': 'error',
         'no-sequences': 'error',
         'no-throw-literal': 'error',
-        'no-trailing-spaces':'off',
+        'no-trailing-spaces': 'off',
         'no-undef-init': 'error',
         'no-unsafe-finally': 'error',
         'no-unused-expressions': 'error',

@@ -1,5 +1,5 @@
 const { Schema, model } = require('mongoose');
-const { USER, FORGOT_PASSWORD, FORGOT_PASSWORD_TOKEN } = require('../../consts/dbEnum');
+const { dbEnum: { USER, FORGOT_PASSWORD, FORGOT_PASSWORD_TOKEN } } = require('../../consts');
 
 const schema = new Schema({
     [FORGOT_PASSWORD_TOKEN]: {

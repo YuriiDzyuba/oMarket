@@ -1,5 +1,4 @@
 const Joi = require('joi');
-
 const { USER_ID_LENGTH } = require('../../consts/userConstants');
 const { PRODUCT, PRICE, IS_SALE, QUANTITY, USER } = require('../../consts/dbEnum');
 const {

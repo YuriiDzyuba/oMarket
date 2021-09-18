@@ -16,6 +16,7 @@ module.exports = {
     IS_ACTIVATED: 'isActivated',
     IS_BANNED: 'isBanned',
     ROLE: 'role',
+    AVATAR: 'avatar',
 
     ADVERTISEMENT: 'advertisement',
     PRODUCT: 'product',

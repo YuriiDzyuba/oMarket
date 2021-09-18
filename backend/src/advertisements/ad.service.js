@@ -1,8 +1,7 @@
 const Ad = require('./ad.model');
-const { USER, ID } = require('../../consts/dbEnum');
+const { dbEnum: { USER, ID } } = require('../../consts');
 
 const adService = {
-
     getAllAds: async (fieldsToRemove = []) => {
         const ads = await Ad.find({})
             .select(fieldsToRemove.join(' '));

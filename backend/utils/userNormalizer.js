@@ -1,5 +1,7 @@
+const { PASSWORD, V } = require('../consts/dbEnum');
+
 module.exports = (userToNormalize, customToRemove = []) => {
-    const defaultToRemove = ['password', '__v'];
+    const defaultToRemove = [PASSWORD, V];
 
     const normalizedUser = userToNormalize.toObject();
 

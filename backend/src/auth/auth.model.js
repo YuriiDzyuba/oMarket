@@ -1,5 +1,5 @@
 const { Schema, model } = require('mongoose');
-const { USER, AUTH, ACCESS_TOKEN, REFRESH_TOKEN } = require('../../consts/dbEnum');
+const { dbEnum: { USER, AUTH, ACCESS_TOKEN, REFRESH_TOKEN } } = require('../../consts');
 
 const schema = new Schema({
     [ACCESS_TOKEN]: {

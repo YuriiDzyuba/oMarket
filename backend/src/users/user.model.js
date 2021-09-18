@@ -1,6 +1,6 @@
 const { Schema, model } = require('mongoose');
 const userRoles = require('../../consts/userRoles');
-const { USER, EMAIL, PASSWORD, NAME, BORN_YEAR, IS_ACTIVATED, IS_BANNED, ROLE } = require('../../consts/dbEnum');
+const { USER, EMAIL, PASSWORD, NAME, BORN_YEAR, IS_ACTIVATED, IS_BANNED, ROLE, AVATAR } = require('../../consts/dbEnum');
 
 const schema = new Schema({
     [EMAIL]: {
@@ -38,6 +38,10 @@ const schema = new Schema({
         type: String,
         enum: Object.values(userRoles),
         default: userRoles.USER
+    },
+    [AVATAR]: {
+        type: String,
+        required: false,
     },
 }, { timestamps: true });
 

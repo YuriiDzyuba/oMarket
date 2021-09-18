@@ -1,16 +1,15 @@
 const jwt = require('jsonwebtoken');
+const config = require('../../config');
 
 const User = require('../users/user.model');
 const ActivateAccount = require('./activateAccount.model');
 const ForgotPassword = require('./forgotPassword.model');
 
-const transporter = require('../../utils/emailTransporter');
-const getHtml = require('./static/getHtml');
 const CustomError = require('../../exeptions/customError');
-
+const { emailTransporter } = require('../../utils');
+const { dbEnum } = require('../../consts');
+const getHtml = require('./static/getHtml');
 const emailActions = require('./static/emailActions');
-const config = require('../../config');
-const dbEnum = require('../../consts/dbEnum');
 
 const accountService = {
 
@@ -41,12 +40,11 @@ const accountService = {
 
     sendMail: async (userMail, action, context = {}) => {
 
-        context = {
-            ...context,
+        context = { ...context,
             frontendURL: config.FRONT_URL
         };
 
-        const emailInfo = await transporter.sendMail({
+        const emailInfo = await emailTransporter.sendMail({
             from: 'No reply',
             to: userMail,
             subject: emailActions[action].subject,

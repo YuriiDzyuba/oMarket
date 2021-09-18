@@ -1,10 +1,6 @@
-const CustomError = require('../../../exeptions/customError');
 const adService = require('../ad.service');
-
-const code = require('../../../consts/statusCodes');
-const message = require('../../../consts/responseMessages');
-const dbEnum = require('../../../consts/dbEnum');
-
+const CustomError = require('../../../exeptions/customError');
+const { code, message, dbEnum } = require('../../../consts');
 const { createNewAd, updateAd } = require('../ad.validators');
 
 const adMiddleware = {

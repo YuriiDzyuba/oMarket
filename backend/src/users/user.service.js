@@ -7,6 +7,11 @@ const userService = {
         return users;
     },
 
+    getFilteredUsers: async (filter) => {
+        const users = await User.find(filter).select(`-${PASSWORD} -${V}`).lean();
+        return users;
+    },
+
     getOneUserById: async (id) => {
         const user = await User.findById(id).select(`-${PASSWORD}`);
         return user;
@@ -17,8 +22,8 @@ const userService = {
         return user;
     },
 
-    updateUser: async (id, data) => {
-        const updatedUser = await User.findByIdAndUpdate(id, data).select(`-${PASSWORD}`);
+    updateUser: async (id, data, returnNew = false) => {
+        const updatedUser = await User.findByIdAndUpdate(id, data, { new: returnNew }).select(`-${PASSWORD}`);
         return updatedUser;
     },
 

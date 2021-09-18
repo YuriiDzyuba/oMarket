@@ -1,0 +1,17 @@
+@import "../styles/bootstrap.variables";
+
+.navbar {
+  background-color: $dark;
+
+  a {
+    color: white;
+    text-decoration: none;
+    padding: .75rem;
+  }
+
+  a:hover {
+    cursor: pointer;
+    color: $yellow;
+  }
+
+}

@@ -1,14 +1,9 @@
 const CustomError = require('../../exeptions/customError');
 const userNormalizer = require('../../utils/userNormalizer');
-
 const authService = require('./auth.service');
 const accountService = require('../account/account.service');
-
-const code = require('../../consts/statusCodes');
-const message = require('../../consts/responseMessages');
-const dbEnum = require('../../consts/dbEnum');
-const { AUTHORIZATION } = require('../../consts/authConstants');
-const { WELCOME_PAGE, FORGET_PASSWORD_PAGE } = require('../../consts/emailPageTypes');
+const userService = require('../users/user.service');
+const { code, message, customErrors, dbEnum, authConst, emailPage } = require('../../consts');
 
 const authController = {
     createNewUser: async (req, res, next) => {
@@ -17,12 +12,19 @@ const authController = {
 
             const hashedPassword = await authService.hashPassword(applicantData.password);
 
-            const newUser = await authService.addNewUser({
+            let newUser = await authService.addNewUser({
                 ...applicantData,
                 password: hashedPassword
             });
-            const actionLink = await accountService.generateActionToken(dbEnum.ACTIVATE_ACCOUNT_TOKEN);
 
+            if (req.files && req.files[dbEnum.AVATAR]) {
+                const { _id } = newUser;
+                const uploadFile = await authService.uploadImageToAWS(req.files[dbEnum.AVATAR], dbEnum.AVATAR, _id);
+
+                newUser = await userService.updateUser(_id, { [dbEnum.AVATAR]: uploadFile.Location }, true);
+            }
+
+            const actionLink = await accountService.generateActionToken(dbEnum.ACTIVATE_ACCOUNT_TOKEN);
             const savedLink = await accountService.addNewLink(
                 {
                     [dbEnum.ACTIVATE_ACCOUNT_TOKEN]: actionLink,
@@ -30,11 +32,15 @@ const authController = {
                 }
             );
 
-            if (!savedLink) throw new CustomError(code.INTERNAL_SERVER_ERROR, message.CANT_CREATE_LINK);
+            if (!savedLink) {
+                throw new CustomError(customErrors.CANT_CREATE_USER_LINK.code,
+                    customErrors.CANT_CREATE_USER_LINK.message,
+                    customErrors.CANT_CREATE_USER_LINK.customCode);
+            }
 
             await accountService.sendMail(
                 newUser.email,
-                WELCOME_PAGE,
+                emailPage.WELCOME_PAGE,
                 { activationLink: savedLink[dbEnum.ACTIVATE_ACCOUNT_TOKEN] }
             );
 
@@ -70,12 +76,16 @@ const authController = {
                     [dbEnum.USER]: newUser._id
                 }
             );
-            console.log(savedLink);
-            if (!savedLink) throw new CustomError(code.INTERNAL_SERVER_ERROR, message.CANT_CREATE_LINK);
+
+            if (!savedLink) {
+                throw new CustomError(customErrors.CANT_CREATE_ADMIN_LINK.code,
+                    customErrors.CANT_CREATE_ADMIN_LINK.message,
+                    customErrors.CANT_CREATE_ADMIN_LINK.customCode);
+            }
 
             await accountService.sendMail(
                 newUser.email,
-                FORGET_PASSWORD_PAGE,
+                emailPage.FORGET_PASSWORD_PAGE,
                 {
                     activationLink: savedLink[dbEnum.FORGOT_PASSWORD],
                     header: message.ADMIN_ACCOUNT_CREATED
@@ -94,19 +104,22 @@ const authController = {
     logIn: async (req, res, next) => {
         try {
             const { currentUser, body: { password } } = req;
-
+            console.log(currentUser, 'currentUser');
             const isPasswordCorrect = await authService.comparePasswords(password, currentUser.password);
 
-            if (!isPasswordCorrect) throw new CustomError(code.NOT_ACCEPTABLE, message.WRONG_PASSWORD);
+            if (!isPasswordCorrect) {
+                throw new CustomError(customErrors.WRONG_USER_PASSWORD.code,
+                    customErrors.WRONG_USER_PASSWORD.message,
+                    customErrors.WRONG_USER_PASSWORD.customCode);
+            }
 
-            const tokenPair = await authService.generateTokenPair();
+            const normalizedUser = userNormalizer(currentUser);
+
+            const tokenPair = await authService.generateTokenPair(normalizedUser);
 
             await authService.addNewTokenPair(tokenPair, currentUser._id);
 
-            res.json({
-                tokenPair,
-                user: userNormalizer(currentUser)
-            });
+            res.json({ ...tokenPair });
 
         } catch (e) {
             next(e);
@@ -115,7 +128,7 @@ const authController = {
 
     logOut: async (req, res, next) => {
         try {
-            const token = req.get(AUTHORIZATION);
+            const token = req.get(authConst.AUTHORIZATION);
 
             const deletedToken = await authService.deleteToken({ accessToken: token });
 
@@ -130,7 +143,7 @@ const authController = {
 
     refreshTokens: async (req, res, next) => {
         try {
-            const refreshToken = req.get(AUTHORIZATION);
+            const refreshToken = req.get(authConst.AUTHORIZATION);
             const { currentUser } = req;
 
             const tokenPair = authService.generateTokenPair();

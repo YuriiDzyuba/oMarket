@@ -2,7 +2,7 @@ const Router = require('express');
 
 const adController = require('./ad.controller');
 const adMiddleware = require('./ad.middlewares');
-const { V, USER } = require('../../consts/dbEnum');
+const { dbEnum: { V, USER } } = require('../../consts');
 
 const adRouter = new Router();
 

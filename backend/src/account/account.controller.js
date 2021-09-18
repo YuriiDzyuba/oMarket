@@ -1,17 +1,10 @@
 const CustomError = require('../../exeptions/customError');
-
 const accountService = require('./account.service');
 const authService = require('../auth/auth.service');
 const userService = require('../users/user.service');
-
-const emailPageType = require('../../consts/emailPageTypes');
-const code = require('../../consts/statusCodes');
-const message = require('../../consts/responseMessages');
-const authConstant = require('../../consts/authConstants');
-const dbEnum = require('../../consts/dbEnum');
+const { emailPage, code, message, authConst, dbEnum } = require('../../consts');
 
 const accountController = {
-
     sendLinkToEmail: (pageType, resMessage) => async (req, res, next) => {
         try {
             const { currentUser, actionLink } = req;
@@ -28,7 +21,7 @@ const accountController = {
     setUserPassword: async (req, res, next) => {
         try {
             const { currentUser, body: { password } } = req;
-            const token = req.get(authConstant.AUTHORIZATION);
+            const token = req.get(authConst.AUTHORIZATION);
 
             const hashedPassword = await authService.hashPassword(password);
 
@@ -46,7 +39,7 @@ const accountController = {
     activateAccount: async (req, res, next) => {
         try {
             const { currentUser } = req;
-            const token = req.get(authConstant.AUTHORIZATION);
+            const token = req.get(authConst.AUTHORIZATION);
 
             await userService.updateUser(currentUser._id, { [dbEnum.IS_ACTIVATED]: true });
             await accountService.deleteField(dbEnum.ACCESS_TOKEN, { [dbEnum.ACTIVATE_ACCOUNT_TOKEN]: token });
@@ -67,8 +60,8 @@ const accountController = {
             if (!modifiedUser) throw new CustomError(code.NOT_FOUND, message.NO_USER);
 
             await accountService.sendMail(modifiedUser.email, toBan
-                ? emailPageType.BAN_PAGE
-                : emailPageType.UN_BAN_PAGE);
+                ? emailPage.BAN_PAGE
+                : emailPage.UN_BAN_PAGE);
 
             await authService.deleteAllTokens({ USER: userId });
 

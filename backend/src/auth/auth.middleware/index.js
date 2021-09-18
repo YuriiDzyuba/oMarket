@@ -7,7 +7,8 @@ const {
     checkToken,
     isReqQueryEmpty,
     isReqBodyEmpty,
-    setNewAdminData
+    setNewAdminData,
+    checkAvatar
 } = require('./auth.middleware');
 
 module.exports = {
@@ -19,5 +20,6 @@ module.exports = {
     checkUserRole,
     isReqBodyEmpty,
     isAccountUnBanned,
-    setNewAdminData
+    setNewAdminData,
+    checkAvatar
 };
